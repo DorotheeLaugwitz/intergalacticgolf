@@ -32,7 +32,7 @@ function Game:Game ()
 
   self.commands = {}
 
---  self.bg = love.graphics.newImage("gfx/bg.png")
+  self.bg = love.graphics.newImage("gfx/background.png")
 
   self.log = {}
   self.planet = Planet (200, 200)
@@ -64,6 +64,10 @@ function Game:Game ()
     MouseButtonDownEvent = function (event)
       self.mouseX = event:x()
       self.mouseY = event:y()
+    end,
+
+    MouseButtonUpEvent = function (event)
+      self:onClick(event.position)
     end
   }
 
@@ -98,19 +102,20 @@ end
 -- Renders stuff onto the screen
 function Game:onRender ()
   --
+  love.graphics.setColor (255, 255, 255, 255)
   local width = love.graphics.getWidth()
   local height = love.graphics.getHeight()
 --  local scaleX = width / self.bg:getWidth()
 --  local scaleY = height / self.bg:getHeight()
---  love.graphics.draw(self.bg, 0, 0, 0, scaleX, scaleY)
+  love.graphics.draw(self.bg, 0, 0, 0, scaleX, scaleY)
 
   self.planet:onRender()
   self.planet2:onRender()
   self.line:onRender()
 
+  love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
   str = "x: " .. self.mouseX .. ", y: " .. self.mouseY
-  love.graphics.push()
   love.graphics.print (str, 100, 100)
   love.graphics.pop()
 
@@ -119,6 +124,16 @@ end
 -- Gets called when game exits. May be used to do some clean up.
 function Game:onExit ()
   --
+end
+
+function Game:onClick (position)
+  if self.planet:hasHitboxIn(position) then
+    self.planet:onClick ()
+  end
+
+  if self.planet2:hasHitboxIn (position) then
+    self.planet2:onClick ()
+  end
 end
 
 function Game:issueCommand (command)

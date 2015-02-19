@@ -42,3 +42,20 @@ end
 
 function Planet:handle (event)
 end
+
+function Planet:hasHitboxIn (position)
+  if position.x - self.x <= 5
+    and position.x - self.x >= -5
+    and position.y - self.y <= 5
+    and position.y - self.y >= -5 then
+
+    return true
+  end
+  return false
+end
+
+function Planet:onClick ()
+  self.r = (self.r + 15) % 255
+  self.g = (self.g + 15) % 255
+  self.b = (self.b + 15) % 255
+end
