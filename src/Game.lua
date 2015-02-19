@@ -21,6 +21,8 @@ class "Game"
 -- Constructs a new game
 function Game:Game ()
   --
+  self.hasline = false
+  self.hasplanet = false
   self.eventManager = EventManager ()
 
   self.eventManager:subscribe ("FocusGainedEvent", self)
@@ -36,14 +38,17 @@ function Game:Game ()
   self.bg = love.graphics.newImage("gfx/background.png")
 
   self.log = {}
-  self.planet = Planet (200, 200)
-  self.planet2 = Planet (300, 200)
-  self.line = Connection (self.planet, self.planet2)
+
+  self.planets = {
+    Planet (400, 200),
+    Planet (450, 300),
+    Planet (500, 200)
+  }
+
+  self.lines = {}
 
   self.mouseX = 0
   self.mouseY = 0
-
-  self.nothing = NilObject ()
 
 --  self.eventManager:subscribe ("KeyboardKeyUpEvent", self.shipoflife)
 
@@ -80,13 +85,11 @@ end
 
 -- Raises (queues) a new event
 function Game:raise (event)
-  --
   self.eventManager:push (event)
 end
 
 -- Callback used by EventManager
 function Game:handle (event)
-  --
   local reaction = self.reactions[event:getClass()]
   if reaction then
     reaction (event)
@@ -101,9 +104,19 @@ function Game:onUpdate (dt)
   self.commands = {}
 
   self.eventManager:update (dt)
-  self.planet:onUpdate (dt)
-  self.planet2:onUpdate (dt)
-  self.line:onUpdate (dt)
+
+  for _, line in pairs(self.lines) do
+    self.hasline = true
+    line:onUpdate (dt)
+  end
+
+  for _, planet in pairs(self.planets) do
+    planet:onUpdate (dt)
+  end
+
+  if self.line then
+    self.line:onUpdate (dt)
+  end
 end
 
 -- Renders stuff onto the screen
@@ -116,14 +129,24 @@ function Game:onRender ()
 --  local scaleY = height / self.bg:getHeight()
   love.graphics.draw(self.bg, 0, 0, 0, scaleX, scaleY)
 
-  self.planet:onRender()
-  self.planet2:onRender()
-  self.line:onRender()
+  if self.line then
+    self.line:onRender ()
+  end
+
+  for _, line in pairs(self.lines) do
+    line:onRender ()
+  end
+
+  for _, planet in pairs(self.planets) do
+    planet:onRender ()
+  end
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
   str = "x: " .. self.mouseX .. ", y: " .. self.mouseY
   love.graphics.print (str, 100, 100)
+  love.graphics.print ("hasline: " .. tostring(self.hasline), 600, 600)
+  love.graphics.print ("hasplanet: " .. tostring(self.hasplanet), 700, 600)
   love.graphics.pop()
 
 end
@@ -134,27 +157,38 @@ function Game:onExit ()
 end
 
 function Game:onClick (position)
-  if self.planet:hasHitboxIn (position) then
-    self.line = Connection (self.planet, position)
-    self.line.dragging = true
-  end
+  planet = self:planetWithHitboxIn (position)
 
-  if self.planet2:hasHitboxIn (position) then
-    self.planet2:onClick ()
+  self.hasplanet = not not planet
+
+  if planet and not self.line then
+    self.line = Connection (planet, position)
+    self.line.dragging = true
   end
 end
 
 function Game:onRelease (position)
-  self.planet:onRelease ()
-  self.planet2:onRelease ()
+  for _, planet in pairs (self.planets) do
+    planet:onRelease ()
+  end
 
-  if self.line.dragging then
-    if self.planet2:hasHitboxIn (position) then
-      self.line:onRelease (self.planet2)
-    else
-      self.line = self.nothing
+  if self.line then
+    planet = self:planetWithHitboxIn (position)
+    if planet then
+      self.line:onRelease (planet)
+      self.lines[#self.lines + 1] = self.line:copy()
+    end
+    self.line = nil
+  end
+end
+
+function Game:planetWithHitboxIn (position)
+  for _, planet in pairs (self.planets) do
+    if planet:hasHitboxIn (position) then
+      return planet
     end
   end
+  return nil
 end
 
 function Game:issueCommand (command)

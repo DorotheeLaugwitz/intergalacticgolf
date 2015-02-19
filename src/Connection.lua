@@ -10,16 +10,6 @@ function Connection:Connection (fromPlanet, toPlanet)
   self.from = fromPlanet
   self.to = toPlanet
 
-  self.start_position = {
-    x = fromPlanet.x,
-    y = fromPlanet.y
-  }
-
-  self.end_position = {
-    x = toPlanet.x,
-    y = toPlanet.y
-  }
-
   self.dragging = false
 end
 
@@ -36,8 +26,6 @@ function Connection:onRender ()
   love.graphics.line(
     self.from.x, self.from.y,
     self.to.x, self.to.y
---    self.start_position.x, self.start_position.y,
---    self.end_position.x, self.end_position.y
   )
   love.graphics.pop()
 end
@@ -51,4 +39,8 @@ function Connection:onRelease (toPlanet)
 end
 
 function Connection:handle (event)
+end
+
+function Connection:copy ()
+  return Connection(self.from, self.to)
 end
