@@ -38,7 +38,7 @@ function Game:Game ()
   self.planet = Planet (200, 200)
   self.planet2 = Planet (300, 200)
   self.line = Connection (self.planet, self.planet2)
---	self.eventManager:subscribe ("KeyboardKeyUpEvent", self.shipoflife)
+	self.eventManager:subscribe ("KeyboardKeyDownEvent", self.planet)
 
 	self.reactions = {
 		KeyboardKeyUpEvent = function (event)
