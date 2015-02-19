@@ -14,15 +14,11 @@ require ("src.events.ResizeEvent")
 
 require ("src.Planet")
 require ("src.Connection")
-require ("src.NilObject")
 
 class "Game"
 
 -- Constructs a new game
 function Game:Game ()
-  --
-  self.hasline = false
-  self.hasplanet = false
   self.eventManager = EventManager ()
 
   self.eventManager:subscribe ("FocusGainedEvent", self)
@@ -106,7 +102,6 @@ function Game:onUpdate (dt)
   self.eventManager:update (dt)
 
   for _, line in pairs(self.lines) do
-    self.hasline = true
     line:onUpdate (dt)
   end
 
@@ -121,7 +116,6 @@ end
 
 -- Renders stuff onto the screen
 function Game:onRender ()
-  --
   love.graphics.setColor (255, 255, 255, 255)
   local width = love.graphics.getWidth()
   local height = love.graphics.getHeight()
@@ -145,8 +139,6 @@ function Game:onRender ()
   love.graphics.setColor (255, 0, 0, 255)
   str = "x: " .. self.mouseX .. ", y: " .. self.mouseY
   love.graphics.print (str, 100, 100)
-  love.graphics.print ("hasline: " .. tostring(self.hasline), 600, 600)
-  love.graphics.print ("hasplanet: " .. tostring(self.hasplanet), 700, 600)
   love.graphics.pop()
 
 end
@@ -158,8 +150,6 @@ end
 
 function Game:onClick (position)
   planet = self:planetWithHitboxIn (position)
-
-  self.hasplanet = not not planet
 
   if planet and not self.line then
     self.line = Connection (planet, position)
