@@ -1,3 +1,3 @@
-# Intergalactic Golf
+# Boilerplate for Löve2d
 
-todo
+Basic project structure for Löve2D based games.
