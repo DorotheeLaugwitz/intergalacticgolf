@@ -13,6 +13,7 @@ require ("src.events.MouseButtonUpEvent")
 require ("src.events.ResizeEvent")
 
 require ("src.Planet")
+require ("src.Connection")
 
 class "Game"
 
@@ -36,6 +37,7 @@ function Game:Game ()
 	self.log = {}
   self.planet = Planet (200, 200)
   self.planet2 = Planet (300, 200)
+  self.line = Connection (self.planet, self.planet2)
 --	self.eventManager:subscribe ("KeyboardKeyUpEvent", self.shipoflife)
 
 	self.reactions = {
@@ -95,6 +97,7 @@ function Game:onRender ()
 
   self.planet:onRender()
   self.planet2:onRender()
+  self.line:onRender()
 end
 
 -- Gets called when game exits. May be used to do some clean up.

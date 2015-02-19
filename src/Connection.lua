@@ -1,8 +1,8 @@
 require ("lib.lclass")
 
-class "Planet"
+class "Connection"
 
-function Planet:Planet (x, y)
+function Connection:Connection (fromPlanet, toPlanet)
   self.gfx = {
 -- TODO use planet graphic
 --    ship = love.graphics.newImage ("gfx/schiff.png"),
@@ -10,27 +10,23 @@ function Planet:Planet (x, y)
   self.r = 255
   self.g = 255
   self.b = 255
-  self.x = x
-  self.y = y
 
-  self.radius = 5
-  self.segments = 5
+  self.start_x = fromPlanet.x
+  self.start_y = fromPlanet.y
 
-  self.scale = 1
+  self.end_x = toPlanet.x
+  self.end_y = toPlanet.y
 end
 
-function Planet:onUpdate (dt)
+function Connection:onUpdate (dt)
 end
 
-function Planet:onRender ()
+function Connection:onRender ()
   love.graphics.setColor (self.r, self.g, self.b, 255)
   love.graphics.push ()
-  love.graphics.circle(
-    "fill",
-    self.x,
-    self.y,
-    self.radius,
-    self.segments
+  love.graphics.line(
+    self.start_x, self.start_y,
+    self.end_x, self.end_y
   )
 --    love.graphics.draw (
 --      self.gfx.ship,
@@ -40,5 +36,5 @@ function Planet:onRender ()
   love.graphics.setColor (255, 255, 255, 255)
 end
 
-function Planet:handle (event)
+function Connection:handle (event)
 end
