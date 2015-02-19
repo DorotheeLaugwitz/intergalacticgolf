@@ -1,7 +1,6 @@
 require ("lib.lclass")
 
 require ("src.EventManager")
-
 require ("src.data.PositionData")
 
 require ("src.events.FocusGainedEvent")

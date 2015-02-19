@@ -4,8 +4,8 @@ class "Connection"
 
 function Connection:Connection (fromPlanet, toPlanet)
   self.r = 255
-  self.g = 0
-  self.b = 0
+  self.g = 255
+  self.b = 100
 
   self.from = fromPlanet
   self.to = toPlanet
@@ -14,6 +14,7 @@ function Connection:Connection (fromPlanet, toPlanet)
 end
 
 function Connection:onUpdate (dt)
+  self.r = (self.r + dt * 100) % 255
   if self.dragging then
     mx, my = love.mouse.getPosition ()
     self.to = { x = mx, y = my }
