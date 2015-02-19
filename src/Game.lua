@@ -14,6 +14,7 @@ require ("src.events.ResizeEvent")
 
 require ("src.Planet")
 require ("src.Connection")
+require ("src.NilObject")
 
 class "Game"
 
@@ -42,6 +43,8 @@ function Game:Game ()
   self.mouseX = 0
   self.mouseY = 0
 
+  self.nothing = NilObject ()
+
 --  self.eventManager:subscribe ("KeyboardKeyUpEvent", self.shipoflife)
 
   self.reactions = {
@@ -62,12 +65,14 @@ function Game:Game ()
     end,
 
     MouseButtonDownEvent = function (event)
+      self:onClick(event.position)
+
       self.mouseX = event:x()
       self.mouseY = event:y()
     end,
 
     MouseButtonUpEvent = function (event)
-      self:onClick(event.position)
+      self:onRelease(event.position)
     end
   }
 
@@ -96,7 +101,9 @@ function Game:onUpdate (dt)
   self.commands = {}
 
   self.eventManager:update (dt)
---  self.shipoflife:onUpdate (dt)
+  self.planet:onUpdate (dt)
+  self.planet2:onUpdate (dt)
+  self.line:onUpdate (dt)
 end
 
 -- Renders stuff onto the screen
@@ -127,12 +134,26 @@ function Game:onExit ()
 end
 
 function Game:onClick (position)
-  if self.planet:hasHitboxIn(position) then
-    self.planet:onClick ()
+  if self.planet:hasHitboxIn (position) then
+    self.line = Connection (self.planet, position)
+    self.line.dragging = true
   end
 
   if self.planet2:hasHitboxIn (position) then
     self.planet2:onClick ()
+  end
+end
+
+function Game:onRelease (position)
+  self.planet:onRelease ()
+  self.planet2:onRelease ()
+
+  if self.line.dragging then
+    if self.planet2:hasHitboxIn (position) then
+      self.line:onRelease (self.planet2)
+    else
+      self.line = self.nothing
+    end
   end
 end
 

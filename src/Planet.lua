@@ -17,9 +17,16 @@ function Planet:Planet (x, y)
   self.segments = 5
 
   self.scale = 1
+
+  self.dragging = false
 end
 
 function Planet:onUpdate (dt)
+  if self.dragging then
+    mx, my = love.mouse.getPosition()
+    self.x = mx
+    self.y = my
+  end
 end
 
 function Planet:onRender ()
@@ -55,7 +62,9 @@ function Planet:hasHitboxIn (position)
 end
 
 function Planet:onClick ()
-  self.r = (self.r + 15) % 255
-  self.g = (self.g + 15) % 255
-  self.b = (self.b + 15) % 255
+  self.dragging = true
+end
+
+function Planet:onRelease ()
+  self.dragging = false
 end

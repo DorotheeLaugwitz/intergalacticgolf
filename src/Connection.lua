@@ -3,37 +3,51 @@ require ("lib.lclass")
 class "Connection"
 
 function Connection:Connection (fromPlanet, toPlanet)
-  self.gfx = {
--- TODO use planet graphic
---    ship = love.graphics.newImage ("gfx/schiff.png"),
-  }
   self.r = 255
-  self.g = 255
-  self.b = 255
+  self.g = 0
+  self.b = 0
 
-  self.start_x = fromPlanet.x
-  self.start_y = fromPlanet.y
+  self.from = fromPlanet
+  self.to = toPlanet
 
-  self.end_x = toPlanet.x
-  self.end_y = toPlanet.y
+  self.start_position = {
+    x = fromPlanet.x,
+    y = fromPlanet.y
+  }
+
+  self.end_position = {
+    x = toPlanet.x,
+    y = toPlanet.y
+  }
+
+  self.dragging = false
 end
 
 function Connection:onUpdate (dt)
+  if self.dragging then
+    mx, my = love.mouse.getPosition ()
+    self.to = { x = mx, y = my }
+  end
 end
 
 function Connection:onRender ()
-  love.graphics.setColor (self.r, self.g, self.b, 255)
   love.graphics.push ()
+  love.graphics.setColor (self.r, self.g, self.b, 255)
   love.graphics.line(
-    self.start_x, self.start_y,
-    self.end_x, self.end_y
+    self.from.x, self.from.y,
+    self.to.x, self.to.y
+--    self.start_position.x, self.start_position.y,
+--    self.end_position.x, self.end_position.y
   )
---    love.graphics.draw (
---      self.gfx.ship,
---      self.x, self.y
---    )
   love.graphics.pop()
-  love.graphics.setColor (255, 255, 255, 255)
+end
+
+function Connection:onRelease (toPlanet)
+  self.dragging = false
+
+  if toPlanet then
+    self.to = toPlanet
+  end
 end
 
 function Connection:handle (event)
