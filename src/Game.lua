@@ -14,6 +14,9 @@ require ("src.events.ResizeEvent")
 require ("src.GreenPlanet")
 require ("src.BluePlanet")
 require ("src.RedPlanet")
+require ("src.Planet")
+require ("src.LineTool")
+require ("src.BuildTool")
 require ("src.Connection")
 
 require ("src.Wallet")
@@ -47,8 +50,6 @@ function Game:Game ()
     BluePlanet (800, 200)
   }
 
-  self.eventManager:subscribe ("KeyboardKeyDownEvent", self.planets[1])
-
   self.wallet = Wallet ()
 
   self.lines = {}
@@ -59,6 +60,12 @@ function Game:Game ()
   self.reactions = {
     KeyboardKeyUpEvent = function (event)
       local switch = {
+        ['1'] = function ()
+          self.tool = LineTool (self)
+        end,
+        ['2'] = function ()
+          self.tool = BuildTool (self)
+        end,
         escape = function ()
           love.event.quit()
         end,
@@ -81,9 +88,11 @@ function Game:Game ()
     end,
 
     MouseButtonUpEvent = function (event)
-      self:onRelease(event.position)
+      self:onRelease (event.position)
     end
   }
+
+  self.tool = LineTool (self)
 
 end
 
@@ -114,6 +123,8 @@ function Game:onUpdate (dt)
   for _, line in pairs(self.lines) do
     line:onUpdate (dt)
   end
+
+  self:highlightHovered()
 
   for _, planet in pairs(self.planets) do
     planet:onUpdate (dt)
@@ -163,12 +174,7 @@ function Game:onExit ()
 end
 
 function Game:onClick (position)
-  planet = self:planetWithHitboxIn (position)
-
-  if planet and not self.line then
-    self.line = Connection (planet, position)
-    self.line.dragging = true
-  end
+  self.tool:onClick (position)
 end
 
 function Game:onRelease (position)
@@ -194,6 +200,20 @@ function Game:planetWithHitboxIn (position)
     end
   end
   return nil
+end
+
+function Game:highlightHovered ()
+  mx, my = love.mouse.getPosition()
+
+  position = {x = mx, y = my}
+
+  for _, planet in pairs (self.planets) do
+    if planet:hasHitboxIn (position) then
+      planet.isClicked = true
+    else
+      planet.isClicked = false
+    end
+  end
 end
 
 function Game:issueCommand (command)
