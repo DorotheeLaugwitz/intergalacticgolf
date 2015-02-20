@@ -6,23 +6,20 @@ function BluePlanet:BluePlanet (x, y)
   self.gfx = {
     planet = love.graphics.newImage ("gfx/planet_blue.png"),
   }
-  self.r = 255
-  self.g = 255
-  self.b = 255
+
+  self.planet = Planet (x, y, 50)
 
   self.x = x
   self.y = y
 
+  self.r = 255
+  self.g = 255
+  self.b = 255
+
   self.gfx_x = x - self.gfx.planet:getWidth() / 2
   self.gfx_y = y - self.gfx.planet:getHeight() / 2
 
-  self.radius = 50
-  self.segments = 10
-
-  self.scale = 1
-
-  self.isClicked = false
-  self.dragging = false
+  self.isHighlighted = false
 
   local pixelcode = [[
   vec4 resultCol;
@@ -51,31 +48,10 @@ function BluePlanet:BluePlanet (x, y)
     { 30/love.graphics.getWidth(),
       30/love.graphics.getHeight() }
   )
-
-  self.reactions = {
-    KeyboardKeyDownEvent = function (event)
-      local switch = {
-        h = function ()
-          self.isClicked = not self.isClicked
-        end
-      }
-
-      local case = switch[event:Key ()]
-      if case then
-        case()
-      end
-    end
-
-  }
 end
 
 function BluePlanet:onUpdate (dt)
-  -- TODO legacy crap
-  if self.dragging then
-    mx, my = love.mouse.getPosition()
-    self.x = mx
-    self.y = my
-  end
+  self.planet:onUpdate (dt)
 end
 
 function BluePlanet:onRender ()
@@ -87,7 +63,7 @@ function BluePlanet:onRender ()
     self.gfx_x, self.gfx_y
    )
 
-  if self.isClicked then
+  if self.isHighlighted then
     love.graphics.setShader(self.shader)
     love.graphics.draw (
     self.gfx.planet,
@@ -100,27 +76,26 @@ function BluePlanet:onRender ()
 end
 
 function BluePlanet:handle (event)
-  local reaction = self.reactions[event:getClass()]
-  if reaction then
-    reaction (event)
-  end
+  self.planet:handle (event)
 end
 
 function BluePlanet:hasHitboxIn (position)
-  if position.x - self.x <= self.radius
-    and position.x - self.x >= -self.radius
-    and position.y - self.y <= self.radius
-    and position.y - self.y >= -self.radius then
-
-    return true
-  end
-  return false
+  return self.planet:hasHitboxIn (position)
 end
 
 function BluePlanet:onClick ()
-  self.dragging = true
+  self.planet:onClick ()
 end
 
 function BluePlanet:onRelease ()
-  self.dragging = false
+  self.planet:onRelease ()
+end
+
+function BluePlanet:build ()
+  self.planet:build ()
+
+  if self.planet.built then
+    self.built = true
+    self.gfx.planet = love.graphics.newImage ("gfx/planet_blue_club.png")
+  end
 end
