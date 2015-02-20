@@ -7,7 +7,8 @@ function GreenPlanet:GreenPlanet (x, y)
     planet = love.graphics.newImage ("gfx/planet_green.png"),
   }
 
-  self.planet = Planet (x, y, 50)
+  self.radius = 50
+  self.planet = Planet (x, y, self.radius)
 
   self.x = x
   self.y = y
@@ -98,5 +99,8 @@ function GreenPlanet:build ()
   if self.planet.built then
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_green_club.png")
+    return true
+  else
+    return false
   end
 end

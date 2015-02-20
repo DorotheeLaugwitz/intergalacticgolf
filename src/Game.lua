@@ -87,6 +87,11 @@ function Game:Game ()
 
   self.tool = LineTool (self)
 
+  self.particleSystem = love.graphics.newParticleSystem(
+    love.graphics.newImage("gfx/planet_red.png"),
+    10
+  )
+
 end
 
 -- Raises (queues) a new event
@@ -124,6 +129,8 @@ function Game:onUpdate (dt)
   if self.line then
     self.line:onUpdate (dt)
   end
+
+  self.particleSystem:update (dt)
 end
 
 -- Renders stuff onto the screen
@@ -146,6 +153,8 @@ function Game:onRender ()
   for _, planet in pairs(self.planets) do
     planet:onRender ()
   end
+
+  love.graphics.draw(self.particleSystem, self.particleX, self.particleY)
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
@@ -196,13 +205,31 @@ function Game:highlightHovered ()
 
   for _, planet in pairs (self.planets) do
     if planet:hasHitboxIn (position) then
-      planet.isClicked = true
+      planet.isHighlighted = true
     else
-      planet.isClicked = false
+      planet.isHighlighted = false
     end
   end
 end
 
 function Game:issueCommand (command)
   table.insert (self.commands, command)
+end
+
+function Game:smokeAt (x, y, radius)
+  self.particleSystem:reset()
+  self.particleSystem:setEmitterLifetime(1)
+  self.particleX = x
+  self.particleY = y
+  self.particleSystem:setParticleLifetime(2, 5)
+  self.particleSystem:setEmissionRate(5)
+  self.particleSystem:setSizeVariation(0)
+  self.particleSystem:setLinearAcceleration(
+    -20,
+    -20,
+    20,
+    20
+  )
+  self.particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 0)
+  self.particleSystem:start()
 end
