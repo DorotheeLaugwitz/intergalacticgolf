@@ -11,8 +11,7 @@ function BuildTool:onClick (position)
 
   if planet then
     if planet:build () then
---      self.game:smokeAt (planet.x, planet.y, planet.radius)
-      self.game:smokeAt (planet.x, planet.y, 50)
+      self.game:smokeAt (planet.clubLocation.x, planet.clubLocation.y, 50)
     end
   end
 end

@@ -20,6 +20,11 @@ function RedPlanet:RedPlanet (x, y)
   self.gfx_x = x - self.gfx.planet:getWidth() / 2
   self.gfx_y = y - self.gfx.planet:getHeight() / 2
 
+  self.clubLocation = {
+    x = self.x + 50,
+    y = self.y + 20
+  }
+
   self.isHighlighted = false
 
   local pixelcode = [[

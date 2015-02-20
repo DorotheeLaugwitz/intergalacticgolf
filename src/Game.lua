@@ -37,7 +37,7 @@ function Game:Game ()
 
   self.commands = {}
 
-  self.bg = love.graphics.newImage("gfx/background.png")
+  self.bg = love.graphics.newImage("gfx/background2.png")
 
   self.log = {}
 
@@ -94,11 +94,24 @@ function Game:Game ()
 
   self.tool = LineTool (self)
 
-  self.particleSystem = love.graphics.newParticleSystem(
-    love.graphics.newImage("gfx/planet_red.png"),
-    10
+  self.smoke = love.graphics.newParticleSystem(
+    love.graphics.newImage("gfx/particle.png"),
+    1000
   )
+  self.smoke:setEmitterLifetime(2)
+  self.smoke:setParticleLifetime(2, 3)
+  self.smoke:setEmissionRate(100)
+  self.smoke:setSizeVariation(1)
+  self.smoke:setLinearAcceleration(
+    -20,
+    -20,
+    20,
+    20
+  )
+  self.smoke:setColors(255, 255, 255, 255, 255, 255, 255, 0)
+  self.smoke:stop()
 
+  self.particles = {}
 end
 
 -- Raises (queues) a new event
@@ -139,7 +152,9 @@ function Game:onUpdate (dt)
     self.line:onUpdate (dt)
   end
 
-  self.particleSystem:update (dt)
+  for _, p in pairs(self.particles) do
+    p:update (dt)
+  end
 end
 
 -- Renders stuff onto the screen
@@ -163,8 +178,10 @@ function Game:onRender ()
     planet:onRender ()
   end
 
-  love.graphics.draw(self.particleSystem, self.particleX, self.particleY)
-  widht, height = love.window.getDesktopDimensions(1)
+  for _, p in pairs(self.particles) do
+    love.graphics.draw(p)
+  end
+  width, height = love.window.getDesktopDimensions(1)
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
@@ -229,19 +246,8 @@ function Game:issueCommand (command)
 end
 
 function Game:smokeAt (x, y, radius)
-  self.particleSystem:reset()
-  self.particleSystem:setEmitterLifetime(1)
-  self.particleX = x
-  self.particleY = y
-  self.particleSystem:setParticleLifetime(2, 5)
-  self.particleSystem:setEmissionRate(5)
-  self.particleSystem:setSizeVariation(0)
-  self.particleSystem:setLinearAcceleration(
-    -20,
-    -20,
-    20,
-    20
-  )
-  self.particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 0)
-  self.particleSystem:start()
+  p = self.smoke:clone()
+  p:setPosition(x, y)
+  p:start()
+  self.particles[#self.particles+1] = p
 end
