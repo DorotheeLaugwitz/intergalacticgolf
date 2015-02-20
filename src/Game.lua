@@ -39,14 +39,13 @@ function Game:Game ()
     Planet (450, 300),
     Planet (500, 200)
   }
- 
+
   self.eventManager:subscribe ("KeyboardKeyDownEvent", self.planets[1])
 
   self.lines = {}
 
   self.mouseX = 0
   self.mouseY = 0
-
 
   self.reactions = {
     KeyboardKeyUpEvent = function (event)
@@ -123,16 +122,16 @@ function Game:onRender ()
 --  local scaleY = height / self.bg:getHeight()
   love.graphics.draw(self.bg, 0, 0, 0, scaleX, scaleY)
 
-  if self.line then
-    self.line:onRender ()
+  for _, planet in pairs(self.planets) do
+    planet:onRender ()
   end
 
   for _, line in pairs(self.lines) do
     line:onRender ()
   end
 
-  for _, planet in pairs(self.planets) do
-    planet:onRender ()
+  if self.line then
+    self.line:onRender ()
   end
 
   love.graphics.push()
@@ -163,6 +162,7 @@ function Game:onRelease (position)
   end
 
   if self.line then
+    self.hasline = true
     planet = self:planetWithHitboxIn (position)
     if planet then
       self.line:onRelease (planet)

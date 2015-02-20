@@ -4,14 +4,17 @@ class "Planet"
 
 function Planet:Planet (x, y)
   self.gfx = {
--- TODO use planet graphic
     planet = love.graphics.newImage ("gfx/splanet.png"),
   }
   self.r = 255
   self.g = 255
   self.b = 255
+
   self.x = x
   self.y = y
+
+  self.gfx_x = x - self.gfx.planet:getWidth() / 2
+  self.gfx_y = y - self.gfx.planet:getHeight() / 2
 
   self.radius = 50
   self.segments = 10
@@ -43,7 +46,11 @@ function Planet:Planet (x, y)
   ]]
 
   self.shader = love.graphics.newShader(pixelcode)
-  self.shader:send( "stepSize",{30/love.graphics.getWidth(),30/love.graphics.getHeight()} )
+  self.shader:send(
+    "stepSize",
+    { 30/love.graphics.getWidth(),
+      30/love.graphics.getHeight() }
+  )
 
   self.reactions = {
     KeyboardKeyDownEvent = function (event)
@@ -63,6 +70,7 @@ function Planet:Planet (x, y)
 end
 
 function Planet:onUpdate (dt)
+  -- TODO legacy crap
   if self.dragging then
     mx, my = love.mouse.getPosition()
     self.x = mx
@@ -76,31 +84,18 @@ function Planet:onRender ()
 
   love.graphics.draw (
     self.gfx.planet,
-    self.x, self.y
+    self.gfx_x, self.gfx_y
    )
 
   if self.isClicked then
     love.graphics.setShader(self.shader)
     love.graphics.draw (
     self.gfx.planet,
-    self.x, self.y
+    self.gfx_x, self.gfx_y
     )
     love.graphics.setShader()
   end
 
---  love.graphics.circle(
---    "fill",
---    self.x,
---    self.y,
---    self.radius,
---    self.segments
---  )
-
-
---    love.graphics.draw (
---      self.gfx.planet,
---      self.x, self.y
---    )
   love.graphics.pop()
 end
 
@@ -112,10 +107,10 @@ function Planet:handle (event)
 end
 
 function Planet:hasHitboxIn (position)
-  if position.x - self.x <= 5
-    and position.x - self.x >= -5
-    and position.y - self.y <= 5
-    and position.y - self.y >= -5 then
+  if position.x - self.x <= self.radius
+    and position.x - self.x >= -self.radius
+    and position.y - self.y <= self.radius
+    and position.y - self.y >= -self.radius then
 
     return true
   end
