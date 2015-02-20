@@ -37,7 +37,7 @@ function Game:Game ()
 
   self.commands = {}
 
-  self.bg = love.graphics.newImage("gfx/background.png")
+  self.bg = love.graphics.newImage("gfx/background2.png")
 
   self.log = {}
 
@@ -94,6 +94,24 @@ function Game:Game ()
 
   self.tool = LineTool (self)
 
+  self.smoke = love.graphics.newParticleSystem(
+    love.graphics.newImage("gfx/particle.png"),
+    1000
+  )
+  self.smoke:setEmitterLifetime(2)
+  self.smoke:setParticleLifetime(2, 3)
+  self.smoke:setEmissionRate(100)
+  self.smoke:setSizeVariation(1)
+  self.smoke:setLinearAcceleration(
+    -20,
+    -20,
+    20,
+    20
+  )
+  self.smoke:setColors(255, 255, 255, 255, 255, 255, 255, 0)
+  self.smoke:stop()
+
+  self.particles = {}
 end
 
 -- Raises (queues) a new event
@@ -133,6 +151,10 @@ function Game:onUpdate (dt)
   if self.line then
     self.line:onUpdate (dt)
   end
+
+  for _, p in pairs(self.particles) do
+    p:update (dt)
+  end
 end
 
 -- Renders stuff onto the screen
@@ -156,7 +178,10 @@ function Game:onRender ()
     planet:onRender ()
   end
 
-  widht, height = love.window.getDesktopDimensions(1)
+  for _, p in pairs(self.particles) do
+    love.graphics.draw(p)
+  end
+  width, height = love.window.getDesktopDimensions(1)
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
@@ -209,13 +234,20 @@ function Game:highlightHovered ()
 
   for _, planet in pairs (self.planets) do
     if planet:hasHitboxIn (position) then
-      planet.isClicked = true
+      planet.isHighlighted = true
     else
-      planet.isClicked = false
+      planet.isHighlighted = false
     end
   end
 end
 
 function Game:issueCommand (command)
   table.insert (self.commands, command)
+end
+
+function Game:smokeAt (x, y, radius)
+  p = self.smoke:clone()
+  p:setPosition(x, y)
+  p:start()
+  self.particles[#self.particles+1] = p
 end

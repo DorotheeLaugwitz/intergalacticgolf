@@ -13,7 +13,9 @@ function BuildTool:onClick (position)
     cost = planet.buildingCost
     if not (cost > self.game.wallet:getBalance ()) then
       self.game.wallet:withdraw (cost)
-      planet:build()
+    if planet:build () then
+      self.game:smokeAt (planet.clubLocation.x, planet.clubLocation.y, 50)
+    end
     end
   end
 end

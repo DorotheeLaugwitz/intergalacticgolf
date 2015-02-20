@@ -7,7 +7,8 @@ function RedPlanet:RedPlanet (x, y)
     planet = love.graphics.newImage ("gfx/planet_red.png"),
   }
 
-  self.planet = Planet (x, y, 50)
+  self.radius = 50
+  self.planet = Planet (x, y, self.radius)
 
   self.x = x
   self.y = y
@@ -18,6 +19,11 @@ function RedPlanet:RedPlanet (x, y)
 
   self.gfx_x = x - self.gfx.planet:getWidth() / 2
   self.gfx_y = y - self.gfx.planet:getHeight() / 2
+
+  self.clubLocation = {
+    x = self.x + 50,
+    y = self.y + 20
+  }
 
   self.isHighlighted = false
 
@@ -99,6 +105,9 @@ function RedPlanet:build ()
   if self.planet.built then
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_red_club.png")
+    return true
+  else
+    return false
   end
 end
 
