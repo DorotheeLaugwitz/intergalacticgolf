@@ -19,6 +19,8 @@ require ("src.LineTool")
 require ("src.BuildTool")
 require ("src.Connection")
 
+require ("src.Wallet")
+
 class "Game"
 
 -- Constructs a new game
@@ -39,11 +41,16 @@ function Game:Game ()
 
   self.log = {}
 
+  self.font = love.graphics.newFont("gfx/font2.ttf", 42)
+  love.graphics.setFont(self.font)
+
   self.planets = {
     GreenPlanet (400, 200),
     RedPlanet (600, 400),
     BluePlanet (800, 200)
   }
+
+  self.wallet = Wallet ()
 
   self.lines = {}
 
@@ -114,6 +121,8 @@ function Game:onUpdate (dt)
   end
   self.commands = {}
 
+  self.wallet:add(1 * dt)
+
   self.eventManager:update (dt)
 
   for _, line in pairs(self.lines) do
@@ -155,11 +164,14 @@ function Game:onRender ()
   end
 
   love.graphics.draw(self.particleSystem, self.particleX, self.particleY)
+  widht, height = love.window.getDesktopDimensions(1)
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
   str = "x: " .. self.mouseX .. ", y: " .. self.mouseY
   love.graphics.print (str, 100, 100)
+  love.graphics.setColor (255, 255, 255, 255)
+  love.graphics.print (self.wallet:balanceAsString(), width-100, height-100)
   love.graphics.pop()
 
 end
