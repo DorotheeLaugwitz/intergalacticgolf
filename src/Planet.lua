@@ -19,6 +19,7 @@ function Planet:Planet (x, y)
   self.scale = 1
 
   self.isClicked = false
+  self.dragging = false
 
   local pixelcode = [[
   vec4 resultCol;
@@ -62,6 +63,11 @@ function Planet:Planet (x, y)
 end
 
 function Planet:onUpdate (dt)
+  if self.dragging then
+    mx, my = love.mouse.getPosition()
+    self.x = mx
+    self.y = my
+  end
 end
 
 function Planet:onRender ()
@@ -103,4 +109,23 @@ function Planet:handle (event)
   if reaction then
     reaction (event)
   end
+end
+
+function Planet:hasHitboxIn (position)
+  if position.x - self.x <= 5
+    and position.x - self.x >= -5
+    and position.y - self.y <= 5
+    and position.y - self.y >= -5 then
+
+    return true
+  end
+  return false
+end
+
+function Planet:onClick ()
+  self.dragging = true
+end
+
+function Planet:onRelease ()
+  self.dragging = false
 end
