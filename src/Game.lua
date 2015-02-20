@@ -11,7 +11,9 @@ require ("src.events.MouseButtonDownEvent")
 require ("src.events.MouseButtonUpEvent")
 require ("src.events.ResizeEvent")
 
-require ("src.Planet")
+require ("src.GreenPlanet")
+require ("src.BluePlanet")
+require ("src.RedPlanet")
 require ("src.Connection")
 
 class "Game"
@@ -35,9 +37,9 @@ function Game:Game ()
   self.log = {}
 
   self.planets = {
-    Planet (400, 200),
-    Planet (450, 300),
-    Planet (500, 200)
+    GreenPlanet (400, 200),
+    RedPlanet (600, 400),
+    BluePlanet (800, 200)
   }
 
   self.eventManager:subscribe ("KeyboardKeyDownEvent", self.planets[1])
@@ -122,16 +124,16 @@ function Game:onRender ()
 --  local scaleY = height / self.bg:getHeight()
   love.graphics.draw(self.bg, 0, 0, 0, scaleX, scaleY)
 
-  for _, planet in pairs(self.planets) do
-    planet:onRender ()
-  end
-
   for _, line in pairs(self.lines) do
     line:onRender ()
   end
 
   if self.line then
     self.line:onRender ()
+  end
+
+  for _, planet in pairs(self.planets) do
+    planet:onRender ()
   end
 
   love.graphics.push()

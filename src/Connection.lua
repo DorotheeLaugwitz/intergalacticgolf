@@ -7,6 +7,8 @@ function Connection:Connection (fromPlanet, toPlanet)
   self.g = 255
   self.b = 100
 
+  self.width = 5
+
   self.from = fromPlanet
   self.to = toPlanet
 
@@ -24,6 +26,7 @@ end
 function Connection:onRender ()
   love.graphics.push ()
   love.graphics.setColor (self.r, self.g, self.b, 255)
+  love.graphics.setLineWidth (self.width)
   love.graphics.line(
     self.from.x, self.from.y,
     self.to.x, self.to.y
