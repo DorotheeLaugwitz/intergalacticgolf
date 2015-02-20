@@ -21,6 +21,8 @@ function BluePlanet:BluePlanet (x, y)
 
   self.isHighlighted = false
 
+  self.buildingCost = 500
+
   local pixelcode = [[
   vec4 resultCol;
   extern vec2 stepSize;
@@ -98,4 +100,8 @@ function BluePlanet:build ()
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_blue_club.png")
   end
+end
+
+function BluePlanet:buildingCost ()
+  return self.buildingCost
 end

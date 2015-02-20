@@ -10,6 +10,10 @@ function BuildTool:onClick (position)
   planet = self.game:planetWithHitboxIn (position)
 
   if planet then
-    planet:build ()
+    cost = planet.buildingCost
+    if not (cost > self.game.wallet:getBalance ()) then
+      self.game.wallet:withdraw (cost)
+      planet:build()
+    end
   end
 end

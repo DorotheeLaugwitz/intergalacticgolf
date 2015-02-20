@@ -6,7 +6,7 @@ function Wallet:Wallet()
   self.balance = 250
 end
 
-function Wallet:balance ()
+function Wallet:getBalance ()
   return math.floor(self.balance)
 end
 

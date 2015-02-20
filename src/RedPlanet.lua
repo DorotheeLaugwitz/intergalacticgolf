@@ -21,6 +21,8 @@ function RedPlanet:RedPlanet (x, y)
 
   self.isHighlighted = false
 
+  self.buildingCost = 250
+
   local pixelcode = [[
   vec4 resultCol;
   extern vec2 stepSize;
@@ -98,4 +100,8 @@ function RedPlanet:build ()
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_red_club.png")
   end
+end
+
+function RedPlanet:buildingCost ()
+  return self.buildingCost
 end

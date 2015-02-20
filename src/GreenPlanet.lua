@@ -22,6 +22,8 @@ function GreenPlanet:GreenPlanet (x, y)
   self.isHighlighted = false
   self.built = true
 
+  self.buildingCost = 100
+
   local pixelcode = [[
   vec4 resultCol;
   extern vec2 stepSize;
@@ -99,4 +101,8 @@ function GreenPlanet:build ()
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_green_club.png")
   end
+end
+
+function GreenPlanet:buildingCost ()
+  return self.buildingCost
 end
