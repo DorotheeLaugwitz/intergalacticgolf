@@ -1,10 +1,10 @@
 require ("lib.lclass")
 
-class "Planet"
+class "BluePlanet"
 
-function Planet:Planet (x, y)
+function BluePlanet:BluePlanet (x, y)
   self.gfx = {
-    planet = love.graphics.newImage ("gfx/splanet.png"),
+    planet = love.graphics.newImage ("gfx/planet_blue.png"),
   }
   self.r = 255
   self.g = 255
@@ -69,7 +69,7 @@ function Planet:Planet (x, y)
   }
 end
 
-function Planet:onUpdate (dt)
+function BluePlanet:onUpdate (dt)
   -- TODO legacy crap
   if self.dragging then
     mx, my = love.mouse.getPosition()
@@ -78,7 +78,7 @@ function Planet:onUpdate (dt)
   end
 end
 
-function Planet:onRender ()
+function BluePlanet:onRender ()
   love.graphics.push ()
   love.graphics.setColor (self.r, self.g, self.b, 255)
 
@@ -99,14 +99,14 @@ function Planet:onRender ()
   love.graphics.pop()
 end
 
-function Planet:handle (event)
+function BluePlanet:handle (event)
   local reaction = self.reactions[event:getClass()]
   if reaction then
     reaction (event)
   end
 end
 
-function Planet:hasHitboxIn (position)
+function BluePlanet:hasHitboxIn (position)
   if position.x - self.x <= self.radius
     and position.x - self.x >= -self.radius
     and position.y - self.y <= self.radius
@@ -117,10 +117,10 @@ function Planet:hasHitboxIn (position)
   return false
 end
 
-function Planet:onClick ()
+function BluePlanet:onClick ()
   self.dragging = true
 end
 
-function Planet:onRelease ()
+function BluePlanet:onRelease ()
   self.dragging = false
 end
