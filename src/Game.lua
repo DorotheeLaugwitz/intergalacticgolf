@@ -37,7 +37,7 @@ function Game:Game ()
 
   self.commands = {}
 
-  self.bg = love.graphics.newImage("gfx/background2.png")
+  self.bg = love.graphics.newImage("gfx/background.png")
 
   self.log = {}
 
@@ -94,24 +94,6 @@ function Game:Game ()
 
   self.tool = LineTool (self)
 
-  self.smoke = love.graphics.newParticleSystem(
-    love.graphics.newImage("gfx/particle.png"),
-    1000
-  )
-  self.smoke:setEmitterLifetime(2)
-  self.smoke:setParticleLifetime(2, 3)
-  self.smoke:setEmissionRate(100)
-  self.smoke:setSizeVariation(1)
-  self.smoke:setLinearAcceleration(
-    -20,
-    -20,
-    20,
-    20
-  )
-  self.smoke:setColors(255, 255, 255, 255, 255, 255, 255, 0)
-  self.smoke:stop()
-
-  self.particles = {}
 end
 
 -- Raises (queues) a new event
@@ -151,10 +133,6 @@ function Game:onUpdate (dt)
   if self.line then
     self.line:onUpdate (dt)
   end
-
-  for _, p in pairs(self.particles) do
-    p:update (dt)
-  end
 end
 
 -- Renders stuff onto the screen
@@ -178,10 +156,7 @@ function Game:onRender ()
     planet:onRender ()
   end
 
-  for _, p in pairs(self.particles) do
-    love.graphics.draw(p)
-  end
-  width, height = love.window.getDesktopDimensions(1)
+  widht, height = love.window.getDesktopDimensions(1)
 
   love.graphics.push()
   love.graphics.setColor (255, 0, 0, 255)
@@ -189,6 +164,8 @@ function Game:onRender ()
   love.graphics.print (str, 100, 100)
   love.graphics.setColor (255, 255, 255, 255)
   love.graphics.print (self.wallet:balanceAsString(), width-100, height-100)
+  coin = love.graphics.newImage("gfx/coin.png")
+  love.graphics.draw (coin, width-140, height-90)
   love.graphics.pop()
 
 end
@@ -234,20 +211,13 @@ function Game:highlightHovered ()
 
   for _, planet in pairs (self.planets) do
     if planet:hasHitboxIn (position) then
-      planet.isHighlighted = true
+      planet.isClicked = true
     else
-      planet.isHighlighted = false
+      planet.isClicked = false
     end
   end
 end
 
 function Game:issueCommand (command)
   table.insert (self.commands, command)
-end
-
-function Game:smokeAt (x, y, radius)
-  p = self.smoke:clone()
-  p:setPosition(x, y)
-  p:start()
-  self.particles[#self.particles+1] = p
 end
