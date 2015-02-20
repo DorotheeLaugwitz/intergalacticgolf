@@ -100,9 +100,7 @@ function RedPlanet:onRelease ()
 end
 
 function RedPlanet:build ()
-  self.planet:build ()
-
-  if self.planet.built then
+  if self.planet:build () then
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_red_club.png")
     return true
@@ -113,4 +111,12 @@ end
 
 function RedPlanet:buildingCost ()
   return self.buildingCost
+end
+
+function RedPlanet:income ()
+  income = 0
+  if self.planet.built then
+    income = income + self.buildingCost / 100
+  end
+  return income
 end

@@ -7,15 +7,18 @@ function BuildTool:BuildTool (game)
 end
 
 function BuildTool:onClick (position)
+end
+
+function BuildTool:onRelease (position)
   planet = self.game:planetWithHitboxIn (position)
 
   if planet then
     cost = planet.buildingCost
-    if not (cost > self.game.wallet:getBalance ()) then
-      self.game.wallet:withdraw (cost)
-    if planet:build () then
-      self.game:smokeAt (planet.clubLocation.x, planet.clubLocation.y, 50)
-    end
+    if self.game.wallet:getBalance () >= cost then
+      if planet:build () then
+        self.game.wallet:withdraw (cost)
+        self.game:smokeAt (planet.clubLocation.x, planet.clubLocation.y, 50)
+      end
     end
   end
 end

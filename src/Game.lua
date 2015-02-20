@@ -50,9 +50,9 @@ function Game:Game ()
     BluePlanet (800, 200)
   }
 
-  self.wallet = Wallet ()
-
   self.lines = {}
+
+  self.wallet = Wallet (self)
 
   self.mouseX = 0
   self.mouseY = 0
@@ -116,7 +116,7 @@ function Game:onUpdate (dt)
   end
   self.commands = {}
 
-  self.wallet:add(1 * dt)
+  self.wallet:onUpdate (dt)
 
   self.eventManager:update (dt)
 
@@ -180,19 +180,7 @@ function Game:onClick (position)
 end
 
 function Game:onRelease (position)
-  for _, planet in pairs (self.planets) do
-    planet:onRelease ()
-  end
-
-  if self.line then
-    self.hasline = true
-    planet = self:planetWithHitboxIn (position)
-    if planet then
-      self.line:onRelease (planet)
-      self.lines[#self.lines + 1] = self.line:copy()
-    end
-    self.line = nil
-  end
+  self.tool:onRelease (position)
 end
 
 function Game:planetWithHitboxIn (position)

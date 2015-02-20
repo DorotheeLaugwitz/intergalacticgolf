@@ -102,9 +102,7 @@ function GreenPlanet:onRelease ()
 end
 
 function GreenPlanet:build ()
-  self.planet:build ()
-
-  if self.planet.built then
+  if self.planet:build () then
     self.built = true
     self.gfx.planet = love.graphics.newImage ("gfx/planet_green_club.png")
     return true
@@ -115,4 +113,12 @@ end
 
 function GreenPlanet:buildingCost ()
   return self.buildingCost
+end
+
+function GreenPlanet:income ()
+  income = 0
+  if self.planet.built then
+    income = income + self.buildingCost / 100
+  end
+  return income
 end
