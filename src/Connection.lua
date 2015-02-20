@@ -31,6 +31,15 @@ function Connection:onRender ()
     self.from.x, self.from.y,
     self.to.x, self.to.y
   )
+  if self.dragging then
+    width, height = love.window.getDesktopDimensions(1)
+    love.graphics.setColor (255, 0, 0, 255)
+    love.graphics.print(
+      tostring(math.floor(self:getLength()/2)),
+      width-250,
+      height - 100
+    )
+  end
   love.graphics.pop()
 end
 
@@ -39,6 +48,7 @@ function Connection:onRelease (toPlanet)
 
   if toPlanet then
     self.to = toPlanet
+    self.buildingCost = self:getBuildingCost()
   end
 end
 
@@ -47,4 +57,29 @@ end
 
 function Connection:copy ()
   return Connection(self.from, self.to)
+end
+
+function Connection:getLength ()
+  a = self.to.x - self.from.x
+  b = self.to.y - self.from.y
+
+  return math.sqrt(a^2 + b^2)
+end
+
+
+function Connection:getBuildingCost ()
+  -- based on line length
+  if not self.buildingCost then
+    return self:getLength () / 2
+  else
+    return self.buildingCost
+  end
+end
+
+function Connection:income ()
+  if self.dragging then
+    return 0
+  else
+    return self:getBuildingCost() / 100
+  end
 end

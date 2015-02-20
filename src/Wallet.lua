@@ -2,7 +2,8 @@ require ("lib.lclass")
 
 class "Wallet"
 
-function Wallet:Wallet()
+function Wallet:Wallet(game)
+  self.game = game
   self.balance = 250
 end
 
@@ -24,3 +25,14 @@ function Wallet:withdraw (number)
   return self.balance
 end
 
+function Wallet:onUpdate (dt)
+  self:add(1 * dt)
+
+  for _, planet in pairs(self.game.planets) do
+    self.balance = self.balance + planet:income () * dt
+  end
+
+  for _, line in pairs(self.game.lines) do
+    self.balance = self.balance + line:income () * dt
+  end
+end

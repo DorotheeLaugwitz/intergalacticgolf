@@ -50,6 +50,10 @@ function Planet:onRelease ()
 end
 
 function Planet:build ()
--- TODO implement
-  self.built = true
+  if self.built then
+    return false
+  else
+    self.built = true
+    return true
+  end
 end
